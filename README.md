@@ -1,5 +1,6 @@
 # Dropwheel
 
+[![CI](https://github.com/dogutez/dropwheel/actions/workflows/ci.yml/badge.svg)](https://github.com/dogutez/dropwheel/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/dogutez/dropwheel)](https://github.com/dogutez/dropwheel/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 ![macOS 15+](https://img.shields.io/badge/macOS-15%2B-lightgrey)

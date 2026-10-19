@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only: CI never needs to write to the repository.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      # Pinned to a commit (v7.0.1) so a moved tag can't change what runs here.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Toolchain
+        run: xcodebuild -version && swift --version
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
