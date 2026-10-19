@@ -30,6 +30,10 @@ final class BackgroundModel {
     private let initial: CanvasStyle
     var style: CanvasStyle { didSet { render() } }
     private(set) var rendered: CGImage?
+    /// Set when the subject can't be lifted (no person, animal or object found).
+    private(set) var cutoutProblem: String?
+    /// The preview's subject without its background, made once on first use.
+    private var cutout: CGImage?
 
     /// Slider ceilings, in full-resolution pixels.
     var maxPadding: Double { Double(max(fullSize.width, fullSize.height)) * 0.4 }
@@ -47,7 +51,21 @@ final class BackgroundModel {
     func reset() { style = initial }
 
     private func render() {
-        rendered = try? ImageEditing.render(image, style: style, scale: Double(image.width) / Double(fullSize.width))
+        var base = image
+        if style.removeBackground {
+            if cutout == nil {
+                do {
+                    cutout = try ImageEditing.liftSubject(image, cropToSubject: true)
+                    cutoutProblem = nil
+                } catch {
+                    cutoutProblem = error.localizedDescription
+                    style.removeBackground = false // re-renders without it
+                    return
+                }
+            }
+            base = cutout ?? image
+        }
+        rendered = try? ImageEditing.render(base, style: style, scale: Double(image.width) / Double(fullSize.width))
     }
 }
 
@@ -81,7 +99,18 @@ struct BackgroundEditor: View {
                     }
                 }
                 sliderRow("Padding", value: $model.style.padding, range: 0...model.maxPadding)
+                GridRow {
+                    Text("Subject").foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Toggle("Remove the original background", isOn: $model.style.removeBackground)
+                            .toggleStyle(.checkbox)
+                        if let problem = model.cutoutProblem {
+                            Text(problem).font(.caption).foregroundStyle(.orange)
+                        }
+                    }
+                }
                 sliderRow("Corners", value: $model.style.cornerRadius, range: 0...model.maxCorner)
+                    .disabled(model.style.removeBackground)
                 sliderRow("Shadow", value: $model.style.shadow, range: 0...model.maxShadow)
                 GridRow {
                     Text("Ratio").foregroundStyle(.secondary)

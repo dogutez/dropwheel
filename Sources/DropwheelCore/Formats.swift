@@ -118,6 +118,7 @@ public enum OutputFormat: String, Sendable, CaseIterable {
 /// Edits that keep the file's family. Crop and Add BG open an editor first.
 public enum Tool: String, Sendable, CaseIterable {
     case compress, clean, half, rotate, crop, background, edit, annotate, redact, split, merge
+    case removeBackground = "removebg"
 
     /// Needs an editor window before anything is written.
     public var isInteractive: Bool { [.crop, .background, .edit, .annotate, .redact].contains(self) }
@@ -130,6 +131,7 @@ public enum Tool: String, Sendable, CaseIterable {
         case .rotate: "Rotate"
         case .crop: "Crop"
         case .background: "Add BG"
+        case .removeBackground: "Remove BG"
         case .edit: "Edit"
         case .annotate: "Annotate"
         case .redact: "Redact"
@@ -146,6 +148,7 @@ public enum Tool: String, Sendable, CaseIterable {
         case .rotate: "rotate.right"
         case .crop: "crop"
         case .background: "photo.on.rectangle.angled"
+        case .removeBackground: "person.and.background.dotted"
         case .edit: "slider.horizontal.3"
         case .annotate: "pencil.tip.crop.circle"
         case .redact: "eye.slash"
@@ -163,6 +166,7 @@ public enum Tool: String, Sendable, CaseIterable {
         case .rotate: "rotated"
         case .crop: "cropped"
         case .background: "with background"
+        case .removeBackground: "no background"
         case .edit: "edited"
         case .annotate: "annotated"
         case .redact: "redacted"
@@ -219,7 +223,7 @@ public enum Catalog {
     public static func tools(for kind: FileKind) -> [Tool] {
         switch kind {
         // Same order as the reference video: clockwise from the top.
-        case .image: [.compress, .clean, .edit, .annotate, .background, .crop, .redact, .merge]
+        case .image: [.compress, .clean, .edit, .annotate, .background, .removeBackground, .crop, .redact, .merge]
         case .pdf: [.compress, .clean, .split, .merge]
         case .video: [.compress, .clean]
         case .vector, .document, .audio, .subtitle, .table: []

@@ -46,13 +46,16 @@ public struct CanvasStyle: Sendable, Equatable {
     public var cornerRadius: Double
     public var shadow: Double
     public var ratio: Ratio
+    /// Lift the subject off its original background first (Vision), so it stands on the new one.
+    public var removeBackground: Bool
 
-    public init(fill: Fill, padding: Double, cornerRadius: Double, shadow: Double, ratio: Ratio = .auto) {
+    public init(fill: Fill, padding: Double, cornerRadius: Double, shadow: Double, ratio: Ratio = .auto, removeBackground: Bool = false) {
         self.fill = fill
         self.padding = padding
         self.cornerRadius = cornerRadius
         self.shadow = shadow
         self.ratio = ratio
+        self.removeBackground = removeBackground
     }
 
     /// Defaults that look right at any resolution, scaled from the image's long edge.
@@ -90,12 +93,15 @@ public enum ImageEditing {
 
     static func addBackground(_ url: URL, style: CanvasStyle, writingTo destination: URL) throws {
         let source = try ImageEngine.open(url)
-        let image = try ImageEngine.orientedImage(source)
+        var image = try ImageEngine.orientedImage(source)
+        if style.removeBackground { image = try liftSubject(image, cropToSubject: true) }
         try ImageEngine.write(render(image, style: style), as: .png, to: destination, metadata: ImageEngine.minimalMetadata(source))
     }
 
     /// Composites `image` onto the styled canvas. `scale` shrinks the style's pixel lengths
-    /// for a downscaled preview, so the preview matches the saved file.
+    /// for a downscaled preview, so the preview matches the saved file. With
+    /// `style.removeBackground`, `image` is expected to be a cut-out (see `liftSubject`): it is
+    /// drawn as is, with the shadow following the subject's outline instead of a rounded card.
     public static func render(_ image: CGImage, style: CanvasStyle, scale: Double = 1) throws -> CGImage {
         let width = Double(image.width), height = Double(image.height)
         let padding = max(0, style.padding * scale)
@@ -121,6 +127,16 @@ public enum ImageEditing {
         let radius = min(max(0, style.cornerRadius * scale), min(width, height) / 2)
         let shape = CGPath(roundedRect: frame, cornerWidth: radius, cornerHeight: radius, transform: nil)
         let shadow = max(0, style.shadow * scale)
+        if style.removeBackground {
+            context.saveGState()
+            if shadow > 0 {
+                context.setShadow(offset: CGSize(width: 0, height: -shadow * 0.45), blur: shadow * 1.6, color: CGColor(gray: 0, alpha: 0.38))
+            }
+            context.draw(image, in: frame)
+            context.restoreGState()
+            guard let result = context.makeImage() else { throw ConversionError.failed("Could not render the image") }
+            return result
+        }
         if shadow > 0 {
             context.saveGState()
             context.setShadow(offset: CGSize(width: 0, height: -shadow * 0.45), blur: shadow * 1.6, color: CGColor(gray: 0, alpha: 0.38))

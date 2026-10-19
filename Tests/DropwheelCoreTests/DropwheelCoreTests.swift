@@ -190,3 +190,38 @@ struct HousekeepingTests {
         #expect(FileManager.default.fileExists(atPath: result.path))
     }
 }
+
+struct RemoveBackgroundTests {
+    static let parrot = URL(fileURLWithPath: "/Library/User Pictures/Animals/Parrot.heic")
+
+    /// Alpha (0...255) at a pixel, top-left origin.
+    func alpha(of image: CGImage, x: Int, y: Int) throws -> UInt8 {
+        let context = try #require(ImageEngine.bitmapContext(width: image.width, height: image.height))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+        let bytes = try #require(context.data).assumingMemoryBound(to: UInt8.self)
+        return bytes[(y * context.bytesPerRow) + x * 4 + 3]
+    }
+
+    @Test(.enabled(if: FileManager.default.fileExists(atPath: parrot.path)))
+    func `the subject stays and the background turns transparent`() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let output = try await Converter().removeBackground(Self.parrot, into: directory)
+        #expect(output.lastPathComponent == "Parrot no background.png")
+        let source = try #require(CGImageSourceCreateWithURL(output as CFURL, nil))
+        let image = try #require(CGImageSourceCreateImageAtIndex(source, 0, nil))
+        #expect(try alpha(of: image, x: image.width - 5, y: 5) == 0, "the green background (top right) is gone")
+        #expect(try alpha(of: image, x: image.width / 2, y: image.height / 3) == 255, "the parrot's face is kept")
+        #expect(MetadataCheck.privateFields(in: output) == [])
+    }
+
+    @Test func `an image without a subject is refused, not saved empty`() throws {
+        let context = try #require(ImageEngine.bitmapContext(width: 256, height: 256))
+        context.setFillColor(CGColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: 256, height: 256))
+        let plain = try #require(context.makeImage())
+        #expect(throws: ConversionError.self) { try ImageEditing.liftSubject(plain) }
+    }
+}

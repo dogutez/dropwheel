@@ -1,6 +1,7 @@
 import AppKit
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import Vision
 
 /// Colour and geometry changes made in the Edit window.
 public struct Adjustments: Sendable, Equatable {
@@ -90,6 +91,30 @@ public struct Redaction: Sendable, Equatable {
 
 extension ImageEditing {
     private static let ciContext = CIContext(options: [.workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!, .cacheIntermediates: false])
+
+    // MARK: Remove background
+
+    /// The photo's subject (all of them, if there are several) on a transparent background.
+    /// Uses Vision's foreground-instance model, the one behind "Lift subject" in Photos; it runs
+    /// on this Mac. `cropToSubject` trims the transparent margin around the subject.
+    public static func liftSubject(_ image: CGImage, cropToSubject: Bool = false) throws -> CGImage {
+        let request = VNGenerateForegroundInstanceMaskRequest()
+        let handler = VNImageRequestHandler(cgImage: image)
+        do {
+            try handler.perform([request])
+        } catch {
+            throw ConversionError.failed("Background removal isn't available on this Mac")
+        }
+        guard let observation = request.results?.first, !observation.allInstances.isEmpty else {
+            throw ConversionError.failed("No subject found to keep: this works on photos of people, animals and objects")
+        }
+        let buffer = try observation.generateMaskedImage(ofInstances: observation.allInstances, from: handler, croppedToInstancesExtent: cropToSubject)
+        let cutout = CIImage(cvPixelBuffer: buffer)
+        guard let output = ciContext.createCGImage(cutout, from: cutout.extent, format: .RGBA8, colorSpace: CGColorSpace(name: CGColorSpace.sRGB)) else {
+            throw ConversionError.failed("Could not create the cut-out")
+        }
+        return output
+    }
 
     // MARK: Edit
 
@@ -261,8 +286,15 @@ extension Converter {
         try saveImage(source, tool: .redact, keepMetadata: false, into: directory) { try ImageEditing.redact($0, redactions) }
     }
 
-    private func saveImage(_ source: URL, tool: Tool, keepMetadata: Bool = true, into directory: URL, _ transform: (CGImage) throws -> CGImage) throws -> URL {
-        let format = try ImageEngine.editFormat(for: source)
+    /// The subject on a transparent background, as "Name no background.png".
+    @concurrent
+    public func removeBackground(_ source: URL, into directory: URL) async throws -> URL {
+        try await LocalCopy.prepare(source)
+        return try saveImage(source, tool: .removeBackground, format: .png, into: directory) { try ImageEditing.liftSubject($0) }
+    }
+
+    private func saveImage(_ source: URL, tool: Tool, format fixedFormat: OutputFormat? = nil, keepMetadata: Bool = true, into directory: URL, _ transform: (CGImage) throws -> CGImage) throws -> URL {
+        let format = try fixedFormat ?? ImageEngine.editFormat(for: source)
         return try produce(source, directory, suffix: tool.suffix, ext: format.fileExtension) { destination in
             let image = try ImageEngine.open(source)
             let result = try transform(ImageEngine.orientedImage(image))

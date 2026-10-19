@@ -35,6 +35,8 @@ public struct Converter: Sendable {
             }]
         case (.image, .tool(.clean)):
             return [try produce(source, directory, suffix: Tool.clean.suffix, ext: source.pathExtension) { try ImageEngine.clean(source, writingTo: $0) }]
+        case (.image, .tool(.removeBackground)):
+            return [try await removeBackground(source, into: directory)]
         case (.image, .tool(let tool)) where tool == .half || tool == .rotate:
             let format = try ImageEngine.editFormat(for: source)
             return [try produce(source, directory, suffix: tool.suffix, ext: format.fileExtension) {

@@ -70,6 +70,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     let edits: [(String, (URL) async throws -> URL)] = [
                         ("Crop", { try await Converter().crop(file, to: CGRect(x: 0, y: 0, width: size.width / 2, height: size.height / 2), into: $0) }),
                         ("Add BG", { try await Converter().addBackground(file, style: .defaults(for: size, fill: .solid(RGBA(hex: 0x3B82F6))), into: $0) }),
+                        ("Add BG cut-out", {
+                            var style = CanvasStyle.defaults(for: size, fill: .gradient([RGBA(hex: 0x3D63FA), RGBA(hex: 0x06B6D4)], angle: 45))
+                            style.removeBackground = true
+                            return try await Converter().addBackground(file, style: style, into: $0)
+                        }),
                         ("Edit", { try await Converter().edit(file, with: adjustments, into: $0) }),
                         ("Annotate", { try await Converter().annotate(file, with: [mark], into: $0) }),
                         ("Redact", { try await Converter().redact(file, with: [Redaction(rect: CGRect(x: 0.1, y: 0.1, width: 0.3, height: 0.2), style: .pixelate)], into: $0) }),
