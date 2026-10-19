@@ -49,7 +49,7 @@ public enum LocalCopy {
         guard descriptor >= 0 else {
             log.error("open() failed with errno \(code, privacy: .public)")
             if code == EPERM || code == EACCES {
-                throw ConversionError.failed("macOS didn't let Dropwheel read this file. Drop it on the wheel again; if it keeps happening, choose “Allow a Folder…” in the menu bar.")
+                throw ConversionError.failed("macOS didn't let Dropwheel read this file. Allow its folder with “Allow a Folder…” in the menu bar, then drop it again.")
             }
             throw ConversionError.failed("The file couldn't be opened (\(String(cString: strerror(code))))")
         }

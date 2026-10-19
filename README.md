@@ -106,8 +106,9 @@ signed and notarized too, so step 3 of Install disappears.
   state, never keystrokes. It reads the drag pasteboard (only file URLs, only while one of those
   keys is held mid-drag) and never reads the clipboard; Copy and Copy Path write to it when you
   choose them.
-- **File access is what you hand over.** Dropwheel can read files you drop on it. To save next to
-  them it needs your permission for that folder (asked once, per folder). macOS grants that as
+- **File access is what you hand over.** Dropwheel works only in folders you allow: the first time
+  you drop a file from a folder, it asks once for that folder, and from then on it can read files
+  there and save results next to them. macOS grants that as
   read *and* write access to the folder and everything inside it, so allow the folders you use,
   not your whole home folder. Without permission nothing is saved; there is no fallback location.
 - **Originals are never touched.** The drop is a copy (with ⌘ or ⌃ held macOS reports it as

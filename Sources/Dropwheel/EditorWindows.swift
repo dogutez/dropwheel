@@ -7,29 +7,38 @@ import DropwheelCore
 final class EditorWindows: NSObject, NSWindowDelegate {
     private let access: FolderAccess
     private var windows: Set<NSWindow> = []
+    /// Folder access held while an editor is open: the drop alone doesn't let the sandbox read
+    /// the file, the folder grant does (the same way conversions read).
+    private var grants: [ObjectIdentifier: FolderAccess.Grant] = [:]
 
     init(access: FolderAccess) {
         self.access = access
     }
 
     func open(_ tool: Tool, for file: URL) {
+        guard let grant = access.grantOrAsk(for: file) else {
+            showError(ConversionError.failed(FolderAccess.notAllowedMessage(for: file)), title: "Couldn't open the image")
+            return
+        }
         Task {
             do {
                 try await LocalCopy.prepare(file)
             } catch {
+                grant.release()
                 showError(error, title: "Couldn't open the image")
                 return
             }
-            present(tool, for: file)
+            present(tool, for: file, holding: grant)
         }
     }
 
-    private func present(_ tool: Tool, for file: URL) {
+    private func present(_ tool: Tool, for file: URL, holding grant: FolderAccess.Grant) {
         let preview: (image: CGImage, fullSize: CGSize)
         do {
             // Editors that re-render on every change get a smaller copy; the save uses full size.
             preview = try ImageEditing.preview(file, maxEdge: tool == .crop || tool == .annotate ? 1600 : 900)
         } catch {
+            grant.release()
             showError(error, title: "Couldn't open the image")
             return
         }
@@ -75,8 +84,10 @@ final class EditorWindows: NSObject, NSWindowDelegate {
                 save(window, file) { try await Converter().redact(file, with: redactions, into: $0) }
             }, onCancel: close))
         default:
+            grant.release()
             return
         }
+        grants[ObjectIdentifier(window)] = grant
 
         window.contentViewController = NSHostingController(rootView: content)
         windows.insert(window)
@@ -111,6 +122,7 @@ final class EditorWindows: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         guard let window = notification.object as? NSWindow else { return }
+        grants.removeValue(forKey: ObjectIdentifier(window))?.release()
         // Let SwiftUI finish tearing down before the window is released.
         Task { windows.remove(window) }
     }

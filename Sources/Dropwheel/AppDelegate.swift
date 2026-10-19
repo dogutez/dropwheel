@@ -264,7 +264,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             • Your files never leave this Mac. Dropwheel is sandboxed without the network entitlement, so macOS blocks it from connecting anywhere.
             • The only exception is the updater (Sparkle), a separate component. If automatic updates are on, it asks github.com once a day for a new version (that reveals your IP address and the app version) and installs it only if its signature matches. Turn it off under “Install Updates Automatically”.
             • No Accessibility, Input Monitoring or Screen Recording permission. It only looks at the mouse buttons and whether ⇧ ⌘ ⌃ are held, never at keystrokes, and never reads the clipboard (Copy and Copy Path write to it when you ask).
-            • It reads the files you drop on it. It saves only into folders you allow; macOS gives that permission as read and write for the whole folder, so allow only the folders you use.
+            • It reads and saves only in folders you allow (asked once per folder). macOS gives that permission as read and write for the whole folder, so allow only the folders you use.
             • Originals are never changed, moved or overwritten.
             • Converted images drop location, device and owner metadata. The Metadata tool removes all of it from photos, PDFs (document info, XMP, comment authors) and videos. Redact saves with no metadata at all.
             • Every file Dropwheel writes carries macOS's quarantine flag.
