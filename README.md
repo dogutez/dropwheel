@@ -15,8 +15,7 @@ appears beside the cursor; drop the file on one of its drops.
 1. Open **Dropwheel.dmg** and drag **Dropwheel** onto the **Applications** folder in the window.
 2. Open Dropwheel from Applications.
 3. The first time, macOS shows **"Dropwheel" Not Opened** (*Apple could not verify "Dropwheel" is
-   free of malware…*). This is expected until releases are signed with an Apple Developer ID, and
-   you only need to do this once:
+   free of malware…*). You only need to do this once:
    1. Click **Done** (not *Move to Trash*).
    2. Open **System Settings › Privacy & Security**.
    3. Scroll down to **Security**, find *"Dropwheel" was blocked to protect your Mac* and click
