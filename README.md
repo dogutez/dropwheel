@@ -14,9 +14,17 @@ appears beside the cursor; drop the file on one of its drops.
 
 1. Open **Dropwheel.dmg** and drag **Dropwheel** onto the **Applications** folder in the window.
 2. Open Dropwheel from Applications.
-3. If macOS says it can't verify the developer: open **System Settings › Privacy & Security**,
-   scroll down and click **Open Anyway** next to Dropwheel (needed once, until releases are signed
-   with an Apple Developer ID).
+3. The first time, macOS shows **"Dropwheel" Not Opened** (*Apple could not verify "Dropwheel" is
+   free of malware…*). This is expected until releases are signed with an Apple Developer ID, and
+   you only need to do this once:
+   1. Click **Done** (not *Move to Trash*).
+   2. Open **System Settings › Privacy & Security**.
+   3. Scroll down to **Security**, find *"Dropwheel" was blocked to protect your Mac* and click
+      **Open Anyway**.
+   4. Enter your password or use Touch ID, then click **Open Anyway** again.
+
+   Right-click › Open no longer skips this on macOS 15 and later. If you don't see **Open Anyway**,
+   try opening Dropwheel once more, then check again.
 4. On first launch, choose whether Dropwheel opens at login and installs updates automatically.
    The first time you drop a file from a folder, click **Allow** once so results can be saved
    next to your files.
