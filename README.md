@@ -8,6 +8,21 @@
 Convert and edit files by dragging them. While you drag any file, hold a key and a wheel
 appears beside the cursor; drop the file on one of its drops.
 
+## Install
+
+**[⬇ Download the latest version](https://github.com/dogutez/dropwheel/releases/latest)** (macOS 15 or later, Apple silicon and Intel)
+
+1. Download `Dropwheel-x.y.z.zip` from the [latest release](../../releases/latest) and unzip it.
+2. Move **Dropwheel.app** to your Applications folder and open it.
+3. If macOS says it can't verify the developer: open **System Settings › Privacy & Security**,
+   scroll down and click **Open Anyway** next to Dropwheel (needed once, until releases are signed
+   with an Apple Developer ID).
+4. On first launch, choose whether Dropwheel opens at login and installs updates automatically.
+   The first time you drop a file from a folder, click **Allow** once so results can be saved
+   next to your files.
+
+## How it works
+
 ![Dragging photo.jpg with Shift held: the Dropwheel wheel offers PNG, HEIC, PDF, TIFF, GIF and BMP](docs/wheel.png)
 
 ![The welcome window explaining the three keys, next to the Tools wheel with Remove BG highlighted](docs/welcome.png)
@@ -63,17 +78,6 @@ cancel. When a job finishes, the centre shows the new file's name and folder: cl
 in Finder, or drag it straight out.
 
 Requires macOS 15 or later; runs natively on Apple silicon and Intel.
-
-## Install
-
-1. Download `Dropwheel-x.y.z.zip` from the [latest release](../../releases/latest) and unzip it.
-2. Move **Dropwheel.app** to your Applications folder and open it.
-3. If macOS says it can't verify the developer: open **System Settings › Privacy & Security**,
-   scroll down and click **Open Anyway** next to Dropwheel (needed once, until releases are signed
-   with an Apple Developer ID).
-4. On first launch, choose whether Dropwheel opens at login and installs updates automatically.
-   The first time you drop a file from a folder, click **Allow** once so results can be saved
-   next to your files.
 
 ## Updates
 
