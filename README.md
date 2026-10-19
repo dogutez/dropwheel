@@ -1,5 +1,9 @@
 # Dropwheel
 
+[![Latest release](https://img.shields.io/github/v/release/dogutez/dropwheel)](https://github.com/dogutez/dropwheel/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![macOS 15+](https://img.shields.io/badge/macOS-15%2B-lightgrey)
+
 Convert and edit files by dragging them. While you drag any file, hold a key and a wheel
 appears beside the cursor; drop the file on one of its drops.
 
@@ -135,4 +139,5 @@ signed and notarized too, so step 3 of Install disappears.
   and carry one hardened-runtime exception (`disable-library-validation`), needed so the app can
   load its own embedded Sparkle framework. Developer ID builds don't get it.
 
-See [SECURITY.md](SECURITY.md) to report a problem. MIT licensed, see [LICENSE](LICENSE).
+Want to help? Read [CONTRIBUTING.md](CONTRIBUTING.md). To report a security problem, see
+[SECURITY.md](SECURITY.md). MIT licensed, see [LICENSE](LICENSE).

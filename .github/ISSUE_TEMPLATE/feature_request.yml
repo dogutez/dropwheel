@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a new format, tool or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Dropwheel to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is it useful?
+      description: What are you trying to get done? How do you do it today?
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This works without sending files anywhere (Dropwheel never uploads files).
