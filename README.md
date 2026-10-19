@@ -10,10 +10,10 @@ appears beside the cursor; drop the file on one of its drops.
 
 ## Install
 
-**[⬇ Download the latest version](https://github.com/dogutez/dropwheel/releases/latest)** (macOS 15 or later, Apple silicon and Intel)
+**[⬇ Download Dropwheel.dmg](https://github.com/dogutez/dropwheel/releases/latest/download/Dropwheel.dmg)** (always the newest version · macOS 15 or later · Apple silicon and Intel)
 
-1. Download `Dropwheel-x.y.z.zip` from the [latest release](../../releases/latest) and unzip it.
-2. Move **Dropwheel.app** to your Applications folder and open it.
+1. Open **Dropwheel.dmg** and drag **Dropwheel** onto the **Applications** folder in the window.
+2. Open Dropwheel from Applications.
 3. If macOS says it can't verify the developer: open **System Settings › Privacy & Security**,
    scroll down and click **Open Anyway** next to Dropwheel (needed once, until releases are signed
    with an Apple Developer ID).
@@ -102,9 +102,9 @@ swift run dropwheel-cli run png photo.heic   # drive the engine without the UI
 ```sh
 cp release/update.env.example release/update.env   # set DROPWHEEL_REPO
 swift scripts/update-signing.swift generate          # once; paste the printed key into update.env
-scripts/release.sh 1.1.0                             # zip + signature + appcast.xml in release/
+scripts/release.sh 1.1.0                             # zip, Dropwheel.dmg, signature and appcast.xml in release/
 git tag 1.1.0 && git push origin 1.1.0
-gh release create 1.1.0 release/Dropwheel-1.1.0.zip release/appcast.xml --verify-tag
+gh release create 1.1.0 release/Dropwheel-1.1.0.zip release/Dropwheel.dmg release/appcast.xml --verify-tag
 ```
 
 The signing key lives in your login Keychain ("Dropwheel update signing key"). Back it up: without

@@ -5,6 +5,7 @@
 *.xcodeproj/xcuserdata/
 # Release artifacts are uploaded to GitHub Releases, not committed.
 /release/*.zip
+/release/*.dmg
 /release/appcast.xml
 # Local settings (feed, public key, signing identity). The public key is not secret,
 # but the file may also name a notary profile; keep it per machine.

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Prepares a release: universal app → zip → EdDSA signature → appcast.xml (Sparkle feed).
+# Prepares a release: universal app → zip (for updates) + Dropwheel.dmg (for first installs)
+# → EdDSA signature → appcast.xml (Sparkle feed).
 #   scripts/release.sh 1.1.0            Developer ID signed + notarized (needs both settings below)
 #   scripts/release.sh 1.1.0 --adhoc    ad-hoc build; users must "Open Anyway" once
 #
@@ -52,6 +53,15 @@ if [ -n "${DROPWHEEL_NOTARY_PROFILE:-}" ]; then
 fi
 ditto -c -k --sequesterRsrc --keepParent build/Dropwheel.app "$ZIP"
 
+# The disk image people download first. Its name never changes, so
+# https://github.com/<repo>/releases/latest/download/Dropwheel.dmg always fetches the newest one.
+DMG=release/Dropwheel.dmg
+scripts/make-dmg.sh "$DMG"
+if [ -n "${DROPWHEEL_NOTARY_PROFILE:-}" ]; then
+  xcrun notarytool submit "$DMG" --keychain-profile "$DROPWHEEL_NOTARY_PROFILE" --wait
+  xcrun stapler staple "$DMG"
+fi
+
 LENGTH="$(stat -f%z "$ZIP")"
 cat > release/appcast.xml <<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -76,7 +86,8 @@ EOF
 swift -suppress-warnings scripts/update-signing.swift sign-release "$ZIP" release/appcast.xml "$DROPWHEEL_ED_PUBLIC_KEY"
 
 echo
-echo "Ready: $ZIP and release/appcast.xml (build $DROPWHEEL_BUILD)."
+echo "Ready: $ZIP, $DMG and release/appcast.xml (build $DROPWHEEL_BUILD)."
+shasum -a 256 "$ZIP" "$DMG"
 echo "Publish with:"
 echo "  git tag $TAG && git push origin $TAG"
-echo "  gh release create $TAG \"$ZIP\" release/appcast.xml --repo $DROPWHEEL_REPO --title \"Dropwheel $VERSION\" --verify-tag"
+echo "  gh release create $TAG \"$ZIP\" \"$DMG\" release/appcast.xml --repo $DROPWHEEL_REPO --title \"Dropwheel $VERSION\" --verify-tag"
