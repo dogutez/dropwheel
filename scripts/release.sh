@@ -34,7 +34,10 @@ fi
 export DROPWHEEL_FEED_URL="${DROPWHEEL_FEED_URL:-https://github.com/$DROPWHEEL_REPO/releases/latest/download/appcast.xml}"
 export DROPWHEEL_VERSION="$VERSION"
 export DROPWHEEL_BUILD="${DROPWHEEL_BUILD:-$(date -u +%Y%m%d%H%M)}"   # always increases
-DOWNLOAD_BASE="${DROPWHEEL_DOWNLOAD_BASE:-https://github.com/$DROPWHEEL_REPO/releases/download/v$VERSION}"
+# Tags are the bare version ("1.0.0"); "v1.0.0"/"v1.0.1" are permanently reserved on GitHub by
+# immutable releases of an earlier repository at this address.
+TAG="$VERSION"
+DOWNLOAD_BASE="${DROPWHEEL_DOWNLOAD_BASE:-https://github.com/$DROPWHEEL_REPO/releases/download/$TAG}"
 
 scripts/build.sh
 
@@ -61,7 +64,7 @@ cat > release/appcast.xml <<EOF
       <sparkle:version>$DROPWHEEL_BUILD</sparkle:version>
       <sparkle:shortVersionString>$VERSION</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <link>https://github.com/$DROPWHEEL_REPO/releases/tag/v$VERSION</link>
+      <link>https://github.com/$DROPWHEEL_REPO/releases/tag/$TAG</link>
       <enclosure url="$DOWNLOAD_BASE/Dropwheel-$VERSION.zip" length="$LENGTH" type="application/octet-stream" sparkle:edSignature="__ED_SIGNATURE__"/>
     </item>
   </channel>
@@ -75,4 +78,5 @@ swift -suppress-warnings scripts/update-signing.swift sign-release "$ZIP" releas
 echo
 echo "Ready: $ZIP and release/appcast.xml (build $DROPWHEEL_BUILD)."
 echo "Publish with:"
-echo "  gh release create v$VERSION \"$ZIP\" release/appcast.xml --repo $DROPWHEEL_REPO --title \"Dropwheel $VERSION\""
+echo "  git tag $TAG && git push origin $TAG"
+echo "  gh release create $TAG \"$ZIP\" release/appcast.xml --repo $DROPWHEEL_REPO --title \"Dropwheel $VERSION\" --verify-tag"

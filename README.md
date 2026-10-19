@@ -76,7 +76,8 @@ swift run dropwheel-cli run png photo.heic   # drive the engine without the UI
 cp release/update.env.example release/update.env   # set DROPWHEEL_REPO
 swift scripts/update-signing.swift generate          # once; paste the printed key into update.env
 scripts/release.sh 1.1.0                             # zip + signature + appcast.xml in release/
-gh release create v1.1.0 release/Dropwheel-1.1.0.zip release/appcast.xml
+git tag 1.1.0 && git push origin 1.1.0
+gh release create 1.1.0 release/Dropwheel-1.1.0.zip release/appcast.xml --verify-tag
 ```
 
 The signing key lives in your login Keychain ("Dropwheel update signing key"). Back it up: without
