@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Least privilege. There is deliberately NO com.apple.security.network.* key: the sandbox
+  denies the app every connection. Update checks run in Sparkle's Downloader XPC service,
+  which is signed separately with Resources/Downloader.entitlements.
+-->
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- Read/write only files and folders the user hands over (drop, open panel). -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- Remember folders the user allowed, across launches. -->
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
+	<!-- Lets the app talk to Sparkle's update XPC services (status + installer), nothing else. -->
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<array>
+		<string>io.github.dogutez.dropwheel-spks</string>
+		<string>io.github.dogutez.dropwheel-spki</string>
+	</array>
+</dict>
+</plist>
