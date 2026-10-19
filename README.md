@@ -10,7 +10,7 @@ appears beside the cursor; drop the file on one of its drops.
 
 ![Dragging photo.jpg with Shift held: the Dropwheel wheel offers PNG, HEIC, PDF, TIFF, GIF and BMP](docs/wheel.png)
 
-![The welcome window explaining the three keys, next to the Tools wheel](docs/welcome.png)
+![The welcome window explaining the three keys, next to the Tools wheel with Remove BG highlighted](docs/welcome.png)
 
 | Key | Ring | What it offers |
 | --- | ---- | -------------- |
@@ -35,10 +35,23 @@ files and mixed selections open the Actions ring.
 Editors (Crop, Add BG, Edit, Annotate, Redact) open a window; the result is saved next to the
 original as "Name cropped.jpg", "Name with background.png", and so on.
 
-**Remove BG** lifts the subject (people, animals, objects) off its background and saves
-"Name no background.png" with transparency. Add BG can do the same first, so the subject stands
-on a new colour or gradient. It uses Apple's Vision model, the one behind "Lift subject" in
-Photos, on your Mac; nothing is uploaded.
+### Remove BG
+
+![A fox photo, the same fox with its background removed, and the fox on a new blue gradient](docs/remove-bg.png)
+
+Drag a photo, hold **⌘ Command** and drop it on **Remove BG**: the subject (people, animals,
+objects) is lifted off its background and saved next to the original as
+"Name no background.png" with a transparent background. In **Add BG**, tick *Remove the original
+background* to place the subject on a new colour or gradient, with a shadow that follows its
+outline.
+
+It uses Apple's Vision model, the one behind "Lift subject" in Photos, and runs entirely on your
+Mac; nothing is uploaded. It works best on photos with a clear subject. Glass, smoke and very
+fine hair against a busy background can leave rough edges, and images without a subject
+(screenshots, documents, landscapes) are refused with a message instead of saving an empty file.
+
+<sub>Fox photo: U.S. Fish and Wildlife Service, Alaska Region,
+[public domain](https://commons.wikimedia.org/wiki/File:Red_fox_(8385096018).jpg).</sub>
 
 Not available, because macOS has no built-in encoder or reader and adding third-party code
 would break the security model below: WebP/AVIF/MP3/OGG/Opus/WMA output, MKV/WebM/AVI input,
@@ -130,6 +143,8 @@ signed and notarized too, so step 3 of Install disappears.
   before it is saved (tested for every format). For PDFs it rebuilds the document without the
   document info and the XMP packet and removes comment authors (comment text stays). Every PDF
   macOS writes names macOS and its version as "Producer"; PDFKit offers no way to change that.
+- **Remove BG** runs Apple's Vision model on the Mac; the photo is not sent anywhere, and the
+  result carries no personal metadata (tested).
 - **Redact** burns black boxes into the pixels and saves with no metadata at all. Pixelate is
   offered too but marked weaker: pixelated text can sometimes be recovered.
 - **Quarantine flag.** Every file Dropwheel writes carries macOS's `com.apple.quarantine` flag (the

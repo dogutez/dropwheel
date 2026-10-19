@@ -6,7 +6,7 @@ import DropwheelCore
 //   dropwheel-cli list <file>                     what the wheel would offer
 //   dropwheel-cli run <action> <file> [out-dir]   action = jpg, png, pdf, docx, ..., compress, clean, half, rotate
 //   dropwheel-cli crop x,y,w,h <image>            crop (pixels, top-left origin)
-//   dropwheel-cli background <image>              default "Add BG" style
+//   dropwheel-cli background <image> [--cutout] [--square]   default "Add BG" style; --cutout removes the original background first
 //   dropwheel-cli edit rotate|flip|warm|half <image>
 //   dropwheel-cli redact x,y,w,h <image>          normalised rect, black box
 //   dropwheel-cli annotate <image>                sample arrow, box and text
@@ -72,7 +72,9 @@ case "background":
     let source = URL(fileURLWithPath: arguments[1])
     do {
         let size = try ImageEditing.preview(source, maxEdge: 64).fullSize
-        let style = CanvasStyle.defaults(for: size, fill: .gradient([RGBA(hex: 0xFFB347), RGBA(hex: 0xF2545B), RGBA(hex: 0xB83280)], angle: 45))
+        var style = CanvasStyle.defaults(for: size, fill: .gradient([RGBA(hex: 0x3D63FA), RGBA(hex: 0x06B6D4)], angle: 45))
+        style.removeBackground = arguments.contains("--cutout")
+        if arguments.contains("--square") { style.ratio = .square }
         print(try await Converter().addBackground(source, style: style, into: source.deletingLastPathComponent()).path)
     } catch {
         fail("error: \(error.localizedDescription)")

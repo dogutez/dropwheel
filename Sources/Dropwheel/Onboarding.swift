@@ -63,7 +63,7 @@ private struct OnboardingView: View {
 
             VStack(spacing: 12) {
                 KeyRow(symbol: "⇧", name: "shift", title: "Convert", detail: "PNG, JPG, HEIC, PDF, DOCX, MP4, M4A and more")
-                KeyRow(symbol: "⌘", name: "command", title: "Tools", detail: "Compress, remove metadata, edit, crop, redact")
+                KeyRow(symbol: "⌘", name: "command", title: "Tools", detail: "Remove background, compress, crop, edit, redact, metadata")
                 KeyRow(symbol: "⌃", name: "control", title: "Actions", detail: "AirDrop, keep on a shelf, copy, copy path, open in Terminal")
             }
 

@@ -267,6 +267,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             • It reads and saves only in folders you allow (asked once per folder). macOS gives that permission as read and write for the whole folder, so allow only the folders you use.
             • Originals are never changed, moved or overwritten.
             • Converted images drop location, device and owner metadata. The Metadata tool removes all of it from photos, PDFs (document info, XMP, comment authors) and videos. Redact saves with no metadata at all.
+            • Remove BG uses Apple's Vision model on this Mac; your photo is not uploaded.
             • Every file Dropwheel writes carries macOS's quarantine flag.
             • No analytics, no accounts. Apart from Sparkle, no third-party code. File names are kept out of system logs.
             """
