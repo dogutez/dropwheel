@@ -14,7 +14,7 @@ appears beside the cursor; drop the file on one of its drops.
 | Key | Ring | What it offers |
 | --- | ---- | -------------- |
 | ⇧ Shift | Convert | formats for that file type (below) |
-| ⌘ Command | Tools | images: Compress, Metadata, Edit, Annotate, Add BG, Crop, Redact (+ Merge for several) · PDF: Compress, Metadata, Split, Merge · video: Compress, Metadata |
+| ⌘ Command | Tools | images: Compress, Metadata, Edit, Annotate, Add BG, Remove BG, Crop, Redact (+ Merge for several) · PDF: Compress, Metadata, Split, Merge · video: Compress, Metadata |
 | ⌃ Control | Actions | AirDrop, Float (a shelf to drag from later), Copy, Copy Path, Terminal; works for any file or folder |
 
 Press another key mid-drag to switch rings, or rest on the centre to cycle. Folders, unknown
@@ -33,6 +33,11 @@ files and mixed selections open the Actions ring.
 
 Editors (Crop, Add BG, Edit, Annotate, Redact) open a window; the result is saved next to the
 original as "Name cropped.jpg", "Name with background.png", and so on.
+
+**Remove BG** lifts the subject (people, animals, objects) off its background and saves
+"Name no background.png" with transparency. Add BG can do the same first, so the subject stands
+on a new colour or gradient. It uses Apple's Vision model, the one behind "Lift subject" in
+Photos, on your Mac; nothing is uploaded.
 
 Not available, because macOS has no built-in encoder or reader and adding third-party code
 would break the security model below: WebP/AVIF/MP3/OGG/Opus/WMA output, MKV/WebM/AVI input,
