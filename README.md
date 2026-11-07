@@ -13,18 +13,9 @@ appears beside the cursor; drop the file on one of its drops.
 **[⬇ Download Dropwheel.dmg](https://github.com/dogutez/dropwheel/releases/latest/download/Dropwheel.dmg)** (always the newest version · macOS 15 or later · Apple silicon and Intel)
 
 1. Open **Dropwheel.dmg** and drag **Dropwheel** onto the **Applications** folder in the window.
-2. Open Dropwheel from Applications.
-3. The first time, macOS shows **"Dropwheel" Not Opened** (*Apple could not verify "Dropwheel" is
-   free of malware…*). You only need to do this once:
-   1. Click **Done** (not *Move to Trash*).
-   2. Open **System Settings › Privacy & Security**.
-   3. Scroll down to **Security**, find *"Dropwheel" was blocked to protect your Mac* and click
-      **Open Anyway**.
-   4. Enter your password or use Touch ID, then click **Open Anyway** again.
-
-   Right-click › Open no longer skips this on macOS 15 and later. If you don't see **Open Anyway**,
-   try opening Dropwheel once more, then check again.
-4. On first launch, choose whether Dropwheel opens at login and installs updates automatically.
+2. Open Dropwheel from Applications. macOS asks once whether to open an app downloaded from the
+   internet: click **Open**.
+3. On first launch, choose whether Dropwheel opens at login and installs updates automatically.
    The first time you drop a file from a folder, click **Allow** once so results can be saved
    next to your files.
 
@@ -115,9 +106,10 @@ gh release create 1.1.0 release/Dropwheel-1.1.0.zip release/Dropwheel.dmg releas
 ```
 
 The signing key lives in your login Keychain ("Dropwheel update signing key"). Back it up: without
-it, installed copies can't accept new versions. With an Apple Developer ID, set
-`DROPWHEEL_SIGN_IDENTITY` and `DROPWHEEL_NOTARY_PROFILE` in `release/update.env` and releases are
-signed and notarized too, so step 3 of Install disappears.
+it, installed copies can't accept new versions. Releases are also signed with a Developer ID and
+notarized: set `DROPWHEEL_SIGN_IDENTITY` and `DROPWHEEL_NOTARY_PROFILE` (from
+`xcrun notarytool store-credentials`) in `release/update.env`. Without them, `--adhoc` makes an
+unsigned build for testing.
 
 ## Privacy and security
 
@@ -168,9 +160,10 @@ signed and notarized too, so step 3 of Install disappears.
 - **No third-party code** apart from Sparkle (updates). Everything else is Apple frameworks
   (ImageIO, PDFKit, AVFoundation, AppKit, CoreImage). File and folder names are kept out of system
   logs (errors are logged as a domain and code).
-- **Signing.** Until releases are signed with an Apple Developer ID, builds are ad-hoc signed
-  and carry one hardened-runtime exception (`disable-library-validation`), needed so the app can
-  load its own embedded Sparkle framework. Developer ID builds don't get it.
+- **Signing.** Releases are signed with a Developer ID, notarized by Apple and run with the
+  hardened runtime and no exceptions. Ad-hoc builds made without a Developer ID (`--adhoc`, or
+  `scripts/build.sh` from source) carry one exception, `disable-library-validation`, so they can
+  load their own embedded Sparkle framework.
 
 Want to help? Read [CONTRIBUTING.md](CONTRIBUTING.md). To report a security problem, see
 [SECURITY.md](SECURITY.md). MIT licensed, see [LICENSE](LICENSE).

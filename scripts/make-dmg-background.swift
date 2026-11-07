@@ -1,5 +1,5 @@
 // Draws the DMG window background: a light wash, "Drag Dropwheel into Applications", an arrow
-// between the two icons, and a first-launch hint. Light on purpose: Finder draws icon labels in
+// between the two icons, and where to open it from. Light on purpose: Finder draws icon labels in
 // black. Coordinates match scripts/dmg-settings.py (660 × 400 window, icons at x 170 and 490).
 // usage: swift scripts/make-dmg-background.swift <out.png> <scale: 1|2>
 import AppKit
@@ -44,7 +44,7 @@ let image = NSImage(size: size, flipped: false) { rect in
     blue.setFill()
     head.fill()
 
-    text("Then open Dropwheel from Applications. The first time, if macOS blocks it, open\nSystem Settings › Privacy & Security and click “Open Anyway”.",
+    text("Then open Dropwheel from Applications.",
          centerX: 330, topY: 318, size: 12, weight: .regular, color: NSColor(red: 0.35, green: 0.39, blue: 0.47, alpha: 1))
     return true
 }
